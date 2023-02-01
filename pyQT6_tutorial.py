@@ -2,7 +2,7 @@ import sys
 from random import choice
 
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QColor, QPalette
 from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -11,6 +11,8 @@ from PyQt6.QtWidgets import (
     QDial,
     QDoubleSpinBox,
     QFontComboBox,
+    QGridLayout,
+    QHBoxLayout,
     QLabel,
     QLCDNumber,
     QLineEdit,
@@ -21,6 +23,8 @@ from PyQt6.QtWidgets import (
     QRadioButton,
     QSlider,
     QSpinBox,
+    QStackedLayout,
+    QTabWidget,
     QTimeEdit,
     QVBoxLayout,
     QWidget,
@@ -131,7 +135,7 @@ class MainWindow0(QMainWindow):
         #context.exec(self.mapToGlobal(e))
 
 
-class MainWindow(QMainWindow):
+class MainWindow1(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -257,6 +261,117 @@ class MainWindow(QMainWindow):
 
     def slider_released(self):
         print("Slider released")
+
+
+class MainWindow2(QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+
+        self.setWindowTitle("My App")
+
+        layout1 = QHBoxLayout()
+        layout2 = QVBoxLayout()
+        layout3 = QVBoxLayout()
+        layout2.addWidget(Color("red"))
+        layout2.addWidget(Color("yellow"))
+        layout2.addWidget(Color("purple"))
+        layout1.addLayout(layout2)
+        layout1.addWidget(Color("green"))
+        layout3.addWidget(Color("blue"))
+        layout3.addWidget(Color("orange"))
+        layout1.addLayout(layout3)
+
+        layout1.setContentsMargins(0, 0, 0, 0)
+        layout1.setSpacing(20)
+
+        widget = QWidget()
+        widget.setLayout(layout1)
+        self.setCentralWidget(widget)
+
+
+class MainWindow3(QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+
+        self.setWindowTitle("My App")
+
+        layout = QGridLayout()
+        layout.addWidget(Color("red"), 0, 0)
+        layout.addWidget(Color("green"), 1, 0)
+        layout.addWidget(Color("blue"), 1, 1)
+        layout.addWidget(Color("purple"), 2, 1)
+
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
+
+
+class MainWindow4(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("My App")
+
+        page_layout = QVBoxLayout()
+        button_layout = QHBoxLayout()
+        self.stack_layout = QStackedLayout()
+
+        page_layout.addLayout(button_layout)
+        page_layout.addLayout(self.stack_layout)
+
+        button = QPushButton("red")
+        button.pressed.connect(self.activate_tab_1)
+        button_layout.addWidget(button)
+        self.stack_layout.addWidget(Color("red"))
+
+        button = QPushButton("green")
+        button.pressed.connect(self.activate_tab_2)
+        button_layout.addWidget(button)
+        self.stack_layout.addWidget(Color("green"))
+
+        button = QPushButton("yellow")
+        button.pressed.connect(self.activate_tab_3)
+        button_layout.addWidget(button)
+        self.stack_layout.addWidget(Color("yellow"))
+
+        widget = QWidget()
+        widget.setLayout(page_layout)
+        self.setCentralWidget(widget)
+
+    def activate_tab_1(self):
+        self.stack_layout.setCurrentIndex(0)
+
+    def activate_tab_2(self):
+        self.stack_layout.setCurrentIndex(1)
+
+    def activate_tab_3(self):
+        self.stack_layout.setCurrentIndex(2)
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("My App")
+
+        tabs = QTabWidget()
+        tabs.setTabPosition(QTabWidget.TabPosition.West)
+        tabs.setMovable(True)
+
+        for n, color in enumerate(["red", "green", "blue", "yellow"]):
+            tabs.addTab(Color(color), color)
+
+        self.setCentralWidget(tabs)
+
+
+class Color(QWidget):
+    def __init__(self, color):
+        super(Color, self).__init__()
+        self.setAutoFillBackground(True)
+
+        palette = self.palette()
+        palette.setColor(QPalette.ColorRole.Window, QColor(color))
+        self.setPalette(palette)
 
 
 def main():
